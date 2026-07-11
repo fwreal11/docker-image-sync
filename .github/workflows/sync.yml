@@ -17,9 +17,14 @@ jobs:
           username: ${{ secrets.ALIYUN_REGISTRY_USER }}
           password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
-      - name: Sync images to ACR
-        uses: skyrim-liu/image-sync-action@main
-        env:
-          DEST_REGISTRY: ${{ secrets.ALIYUN_REGISTRY }}
-          DEST_NAMESPACE: ${{ secrets.ALIYUN_NAME_SPACE }}
-          IMAGE_LIST_FILE: images.txt
+      - name: Install skopeo
+        run: sudo apt update && sudo apt install -y skopeo
+
+      - name: Sync images via skopeo
+        run: |
+          while read src_img; do
+            if [[ -n "$src_img" ]]; then
+              dest_img="${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAME_SPACE }}/${src_img//\//-}"
+              skopeo copy --all docker://$src_img docker://$dest_img
+            fi
+          done < images.txt
