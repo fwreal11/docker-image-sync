@@ -9,10 +9,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Sync images
-        uses: docker://pengzhanbo/docker-image-pusher:latest
+
+      - name: Login Aliyun ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_REGISTRY_USER }}
+          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+
+      - name: Sync images to ACR
+        uses: skyrim-liu/image-sync-action@main
         env:
-          ALIYUN_REGISTRY: ${{ secrets.ALIYUN_REGISTRY }}
-          ALIYUN_REGISTRY_USER: ${{ secrets.ALIYUN_REGISTRY_USER }}
-          ALIYUN_REGISTRY_PASSWORD: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
-          ALIYUN_NAME_SPACE: ${{ secrets.ALIYUN_NAME_SPACE }}
+          DEST_REGISTRY: ${{ secrets.ALIYUN_REGISTRY }}
+          DEST_NAMESPACE: ${{ secrets.ALIYUN_NAME_SPACE }}
+          IMAGE_LIST_FILE: images.txt
