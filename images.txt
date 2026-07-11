@@ -1,0 +1,9 @@
+# Docker Hub 镜像
+containrrr/watchtower
+whyour/qinglong
+xhofe/alist
+tailscale/tailscale
+# GHCR 镜像
+nyanmisaka/jellyfin
+home-assistant/home-assistant
+adguard/adguardhome
